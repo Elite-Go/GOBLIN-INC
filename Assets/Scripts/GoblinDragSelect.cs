@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 /// <summary>Owns the left-drag selection interaction for Goblin-tagged sprites.</summary>
 public sealed class GoblinDragSelect : MonoBehaviour
@@ -7,14 +9,19 @@ public sealed class GoblinDragSelect : MonoBehaviour
     private const int SelectionButton = 0;
     private const float DragThreshold = 6f;
 
-    [SerializeField, Tooltip("Goblin-tagged objects inside the most recently completed drag rectangle.")]
-    private List<GameObject> selectedGoblins = new List<GameObject>();
+    [SerializeField]
+    [Tooltip("마지막 선택 조작으로 선택된 고블린 목록입니다.")]
+    [FormerlySerializedAs("selectedGoblins")]
+    private List<GameObject> selected = new List<GameObject>();
 
     private Vector2 dragStart;
     private Vector2 dragCurrent;
     private bool isDragging;
 
-    public IReadOnlyList<GameObject> SelectedGoblins => selectedGoblins;
+    public IReadOnlyList<GameObject> SelectedGoblins => selected;
+    public event Action<Vector2> PointerClicked;
+    public bool IsDragging => isDragging;
+    public Rect DragRectangle => GetScreenRect(dragStart, dragCurrent);
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     private static void CreateForLoadedScene()
@@ -44,11 +51,14 @@ public sealed class GoblinDragSelect : MonoBehaviour
         if (Input.GetMouseButtonUp(SelectionButton))
         {
             dragCurrent = Input.mousePosition;
+            if ((dragCurrent - dragStart).sqrMagnitude >= DragThreshold * DragThreshold)
+                isDragging = true;
             if (isDragging) SelectGoblinsInRectangle(GetScreenRect(dragStart, dragCurrent));
+            else PointerClicked?.Invoke(dragCurrent);
             isDragging = false;
         }
 
-        selectedGoblins.RemoveAll(goblin => goblin == null);
+        selected.RemoveAll(goblin => goblin == null);
     }
 
     private void OnGUI()
@@ -65,7 +75,7 @@ public sealed class GoblinDragSelect : MonoBehaviour
 
     private void SelectGoblinsInRectangle(Rect screenRect)
     {
-        selectedGoblins.Clear();
+        selected.Clear();
         var camera = Camera.main;
         if (camera == null)
         {
@@ -78,7 +88,7 @@ public sealed class GoblinDragSelect : MonoBehaviour
             if (renderer == null || !renderer.enabled || !renderer.gameObject.CompareTag("Goblin")) continue;
             var screenPoint = camera.WorldToScreenPoint(renderer.bounds.center);
             if (screenPoint.z >= 0f && screenRect.Contains(new Vector2(screenPoint.x, screenPoint.y)))
-                selectedGoblins.Add(renderer.gameObject);
+                selected.Add(renderer.gameObject);
         }
     }
 

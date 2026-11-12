@@ -1,19 +1,36 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 /// <summary>Runs fine-grained A* on Ground and treats non-trigger 2D colliders as obstacles.</summary>
 [DisallowMultipleComponent]
-public sealed class GoblinPathfinder2D : MonoBehaviour
+public sealed class GoblinPathfinder2D : MonoBehaviour, IGoblinPathPlanner2D
 {
-    [SerializeField] private Tilemap ground;
-    [SerializeField, Min(0.05f), Tooltip("World-space width and height of each A* node.")]
+    [SerializeField] [Tooltip("길찾기 영역을 정의하는 지형 타일맵입니다.")]
+    [FormerlySerializedAs("ground")]
+    private Tilemap groundMap;
+    [SerializeField, Min(0.05f)]
+    [Tooltip("A* 노드 한 칸의 월드 크기입니다.")]
     private float nodeSize = 0.25f;
-    [SerializeField] private LayerMask blockingLayers = ~0;
-    [SerializeField, Min(0f)] private float obstaclePadding = 0.14f;
-    [SerializeField, Min(0.05f)] private float smoothingSampleDistance = 0.1f;
-    [SerializeField, Min(0.1f)] private float nearestWalkableSearchDistance = 2f;
-    [SerializeField, Min(100)] private int maxExpandedNodes = 50000;
+    [SerializeField] [Tooltip("경로를 막는 장애물 레이어입니다.")]
+    [FormerlySerializedAs("blockingLayers")]
+    private LayerMask blockLayers = ~0;
+    [SerializeField, Min(0f)] [Tooltip("장애물 주위에 추가할 경로 여유 거리입니다.")]
+    [FormerlySerializedAs("obstaclePadding")]
+    private float obstPad = 0.14f;
+    [SerializeField, Min(0.05f)] [Tooltip("경로 부드럽게 하기의 검사 간격입니다.")]
+    [FormerlySerializedAs("smoothingSampleDistance")]
+    private float smoothStep = 0.1f;
+    [SerializeField, Min(0.1f)] [Tooltip("시작 위치를 통행 가능 노드로 찾는 최대 거리입니다.")]
+    [FormerlySerializedAs("nearestWalkableSearchDistance")]
+    private float startSnap = 2f;
+    [SerializeField, Min(0.05f)] [Tooltip("목표 위치를 통행 가능 노드로 보정하는 최대 거리입니다.")]
+    [FormerlySerializedAs("maximumGoalSnapDistance")]
+    private float goalSnap = 0.5f;
+    [SerializeField, Min(100)] [Tooltip("한 번의 길찾기에서 확장할 최대 노드 수입니다.")]
+    [FormerlySerializedAs("maxExpandedNodes")]
+    private int maxNodes = 50000;
 
     private static readonly Vector2Int[] Neighbours =
     {
@@ -30,7 +47,9 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     private int nodeColumns;
     private int nodeRows;
     private float cachedNodeSize;
+    private Matrix4x4 cachedGroundTransform;
     private bool gridInitialized;
+    private bool obstacleFilterInitialized;
 
     private struct NodeRecord
     {
@@ -98,14 +117,12 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     public int NodeColumns { get { EnsureGridInitialized(); return nodeColumns; } }
     public int NodeRows { get { EnsureGridInitialized(); return nodeRows; } }
 
-    private void Reset() => ground = GetComponent<Tilemap>();
+    private void Reset() => groundMap = GetComponent<Tilemap>();
 
     private void Awake()
     {
         ResolveGroundTilemap();
-        obstacleFilter = new ContactFilter2D();
-        obstacleFilter.SetLayerMask(blockingLayers);
-        obstacleFilter.useTriggers = false;
+        InitializeObstacleFilter();
         EnsureGridInitialized();
     }
 
@@ -113,17 +130,17 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
 
     private void ResolveGroundTilemap()
     {
-        if (ground != null) return;
-        ground = GetComponent<Tilemap>();
-        if (ground != null) return;
+        if (groundMap != null) return;
+        groundMap = GetComponent<Tilemap>();
+        if (groundMap != null) return;
 
         var tilemaps = FindObjectsByType<Tilemap>(FindObjectsSortMode.None);
         foreach (var tilemap in tilemaps)
         {
             if (tilemap == null) continue;
-            if (ground == null) ground = tilemap;
+            if (groundMap == null) groundMap = tilemap;
             if (tilemap.name != "Ground") continue;
-            ground = tilemap;
+            groundMap = tilemap;
             break;
         }
     }
@@ -132,14 +149,16 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     public bool EnsureGridInitialized()
     {
         ResolveGroundTilemap();
-        if (ground == null || nodeSize <= 0f) return false;
+        if (groundMap == null || nodeSize <= 0f) return false;
 
-        var bounds = ground.cellBounds;
-        if (gridInitialized && bounds.Equals(cachedCellBounds) && Mathf.Approximately(nodeSize, cachedNodeSize))
+        var bounds = groundMap.cellBounds;
+        var groundTransform = groundMap.transform.localToWorldMatrix;
+        if (gridInitialized && bounds.Equals(cachedCellBounds) &&
+            Mathf.Approximately(nodeSize, cachedNodeSize) && cachedGroundTransform.Equals(groundTransform))
             return nodeColumns > 0 && nodeRows > 0;
 
-        var minimum = ground.CellToWorld(new Vector3Int(bounds.xMin, bounds.yMin, bounds.zMin));
-        var maximum = ground.CellToWorld(new Vector3Int(bounds.xMax, bounds.yMax, bounds.zMin));
+        var minimum = groundMap.CellToWorld(new Vector3Int(bounds.xMin, bounds.yMin, bounds.zMin));
+        var maximum = groundMap.CellToWorld(new Vector3Int(bounds.xMax, bounds.yMax, bounds.zMin));
         var width = Mathf.Abs(maximum.x - minimum.x);
         var height = Mathf.Abs(maximum.y - minimum.y);
         gridOrigin = new Vector2(Mathf.Min(minimum.x, maximum.x), Mathf.Min(minimum.y, maximum.y));
@@ -147,11 +166,23 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
         nodeRows = Mathf.CeilToInt(height / nodeSize);
         cachedCellBounds = bounds;
         cachedNodeSize = nodeSize;
+        cachedGroundTransform = groundTransform;
         gridInitialized = nodeColumns > 0 && nodeRows > 0;
-
-        obstacleFilter.SetLayerMask(blockingLayers);
-        obstacleFilter.useTriggers = false;
+        InitializeObstacleFilter();
         return gridInitialized;
+    }
+
+    private void InitializeObstacleFilter()
+    {
+        var mask = blockLayers.value;
+        var obstacleLayer = LayerMask.NameToLayer("Obstacle");
+        var selectableLayer = LayerMask.NameToLayer("Selectable");
+        if (obstacleLayer >= 0) mask |= 1 << obstacleLayer;
+        if (selectableLayer >= 0) mask |= 1 << selectableLayer;
+        obstacleFilter = new ContactFilter2D();
+        obstacleFilter.SetLayerMask(mask);
+        obstacleFilter.useTriggers = false;
+        obstacleFilterInitialized = true;
     }
 
     public Vector2 GetNodeCenter(Vector2Int node)
@@ -178,7 +209,8 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
 
     public bool IsObstacleAt(Vector2 worldPosition, float clearanceRadius)
     {
-        if (ground == null || !ground.HasTile(ground.WorldToCell(worldPosition))) return false;
+        if (!obstacleFilterInitialized) InitializeObstacleFilter();
+        if (groundMap == null || !groundMap.HasTile(groundMap.WorldToCell(worldPosition))) return false;
         return IsBlockedByCollider(worldPosition, clearanceRadius);
     }
 
@@ -186,10 +218,12 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     {
         result.Clear();
         if (!EnsureGridInitialized()) return false;
+        if (!obstacleFilterInitialized) InitializeObstacleFilter();
 
         Physics2D.SyncTransforms();
-        if (!TryFindNearestWalkableNode(start, bodyRadius, out var startNode) ||
-            !TryFindNearestWalkableNode(requestedDestination, bodyRadius, out var goalNode)) return false;
+        if (!TryFindNearestWalkableNode(start, bodyRadius, startSnap, out var startNode) ||
+            !TryFindNearestWalkableNode(requestedDestination, bodyRadius,
+                Mathf.Min(startSnap, goalSnap), out var goalNode)) return false;
 
         var rawPath = new List<Vector2>();
         if (!FindGridPath(startNode, goalNode, bodyRadius, rawPath)) return false;
@@ -206,7 +240,7 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
         open.Push(new OpenEntry { Node = start, Cost = 0f, Priority = Heuristic(start, goal) });
         var expandedNodes = 0;
 
-        while (open.Count > 0 && expandedNodes < maxExpandedNodes)
+        while (open.Count > 0 && expandedNodes < maxNodes)
         {
             var entry = open.Pop();
             if (closed.Contains(entry.Node) || entry.Cost > records[entry.Node].Cost) continue;
@@ -241,10 +275,11 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
         return false;
     }
 
-    private bool TryFindNearestWalkableNode(Vector2 worldPosition, float clearance, out Vector2Int bestNode)
+    private bool TryFindNearestWalkableNode(Vector2 worldPosition, float clearance, float searchDistance,
+        out Vector2Int bestNode)
     {
         var center = WorldToNode(worldPosition);
-        var searchRadius = Mathf.CeilToInt(nearestWalkableSearchDistance / cachedNodeSize);
+        var searchRadius = Mathf.CeilToInt(searchDistance / cachedNodeSize);
         var bestDistance = float.PositiveInfinity;
         bestNode = default;
 
@@ -259,7 +294,7 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
             bestNode = candidate;
         }
 
-        return !float.IsPositiveInfinity(bestDistance);
+        return bestDistance <= searchDistance * searchDistance;
     }
 
     private Vector2Int WorldToNode(Vector2 worldPosition)
@@ -272,13 +307,14 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     {
         if (!IsInsideGridInternal(node)) return false;
         var world = GetNodeCenterInternal(node);
-        var cell = ground.WorldToCell(world);
-        return ground.HasTile(cell) && !IsBlockedByCollider(world, clearance);
+        var cell = groundMap.WorldToCell(world);
+        return groundMap.HasTile(cell) && !IsBlockedByCollider(world, clearance);
     }
 
     private bool IsBlockedByCollider(Vector2 position, float clearance)
     {
-        var radius = Mathf.Max(0.01f, clearance + obstaclePadding);
+        if (!obstacleFilterInitialized) InitializeObstacleFilter();
+        var radius = Mathf.Max(0.01f, clearance + obstPad);
         var hitCount = Physics2D.OverlapCircle(position, radius, obstacleFilter, overlapBuffer);
         for (var i = 0; i < hitCount; i++)
         {
@@ -316,7 +352,7 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
             index = furthestVisible + 1;
         }
 
-        if (ground.HasTile(ground.WorldToCell(requestedDestination)) &&
+        if (groundMap.HasTile(groundMap.WorldToCell(requestedDestination)) &&
             !IsBlockedByCollider(requestedDestination, clearance) &&
             IsSegmentWalkable(anchor, requestedDestination, clearance))
         {
@@ -328,12 +364,12 @@ public sealed class GoblinPathfinder2D : MonoBehaviour
     private bool IsSegmentWalkable(Vector2 from, Vector2 to, float clearance)
     {
         var distance = Vector2.Distance(from, to);
-        var sampleStep = Mathf.Min(smoothingSampleDistance, cachedNodeSize * 0.5f);
+        var sampleStep = Mathf.Min(smoothStep, cachedNodeSize * 0.5f);
         var steps = Mathf.Max(1, Mathf.CeilToInt(distance / sampleStep));
         for (var step = 1; step <= steps; step++)
         {
             var point = Vector2.Lerp(from, to, step / (float)steps);
-            if (!ground.HasTile(ground.WorldToCell(point)) || IsBlockedByCollider(point, clearance)) return false;
+            if (!groundMap.HasTile(groundMap.WorldToCell(point)) || IsBlockedByCollider(point, clearance)) return false;
         }
         return true;
     }

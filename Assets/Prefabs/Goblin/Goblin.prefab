@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 8502721225894827186}
   - component: {fileID: 3046812323827695069}
   - component: {fileID: 2567906179492348251}
+  - component: {fileID: 2977199987767384682}
   m_Layer: 0
   m_Name: Goblin
   m_TagString: Goblin
@@ -95,7 +96,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_SpriteSortPoint: 0
+  m_SpriteSortPoint: 1
 --- !u!58 &7094143693214215222
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -130,7 +131,7 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.03, y: -0.25}
+  m_Offset: {x: 0.03, y: 0.25}
   m_Radius: 0.2
 --- !u!50 &4720726012688981971
 Rigidbody2D:
@@ -171,18 +172,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34e125fc049909c49b3b3723e96364c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GoblinAgent2D
-  moveSpeed: 3.5
-  acceleration: 12
-  waypointTolerance: 0.04
-  stalledReplanDelay: 0.45
-  progressThreshold: 0.02
-  replanClearanceStep: 0.1
-  maxAdditionalClearance: 0.3
-  body: {fileID: 4720726012688981971}
-  bodyCollider: {fileID: 7094143693214215222}
-  path: []
-  destination: {x: 0, y: 0}
-  hasDestination: 0
+  speed: 3.5
+  accel: 12
+  wayTol: 0.04
+  stopDist: 0.1
+  stallDelay: 0.45
+  progStep: 0.1
+  clearStep: 0.1
+  maxClear: 0.3
+  rb: {fileID: 4720726012688981971}
+  bodyCol: {fileID: 7094143693214215222}
+  route: []
+  dest: {x: 0, y: 0}
+  hasDest: 0
 --- !u!120 &3046812323827695069
 LineRenderer:
   serializedVersion: 3
@@ -307,7 +309,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GoblinPathLineRenderer
   agent: {fileID: 8502721225894827186}
   line: {fileID: 3046812323827695069}
-  pathColor: {r: 1, g: 0.72, b: 0.18, a: 0.95}
-  lineWidth: 0.2
-  renderHeight: -0.08
-  DebugShowPath: 1
+  pathCol: {r: 1, g: 0.72, b: 0.18, a: 0.95}
+  lineW: 0.2
+  dotGap: 0.2
+  dotFill: 0.45
+  renderZ: -0.08
+  DebugPath: 1
+--- !u!114 &2977199987767384682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5872150690525525490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3dc8e3c8632b18448694d1411815229, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoblinResourceHarvester
+  agent: {fileID: 8502721225894827186}

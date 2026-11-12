@@ -8,16 +8,36 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Tilemap))]
 public sealed class GoblinGridVisualizer : MonoBehaviour
 {
-    [SerializeField] private Tilemap ground;
-    [SerializeField] private GoblinPathfinder2D pathfinder;
-    [SerializeField, FormerlySerializedAs("showGrid")] private bool DebugShowGrid = true;
-    [SerializeField, FormerlySerializedAs("showBlockedNodes")] private bool DebugShowBlockedNodes = true;
-    [SerializeField] private Color gridColor = new Color(0.08f, 0.07f, 0.05f, 0.28f);
-    [SerializeField] private Color blockedNodeColor = new Color(1f, 0.12f, 0.1f, 0.52f);
-    [SerializeField, Min(0.002f)] private float lineWidth = 0.008f;
-    [SerializeField, Min(0.01f)] private float blockedNodeClearance = 0.34f;
-    [SerializeField, Min(0.002f)] private float blockedNodeInset = 0.02f;
-    [SerializeField] private int sortingOrderOffset = 1;
+    [SerializeField] [Tooltip("길찾기에 사용하는 지형 타일맵입니다.")]
+    [FormerlySerializedAs("ground")]
+    private Tilemap groundMap;
+    [SerializeField] [Tooltip("그리드와 장애물 정보를 제공하는 길찾기 컴포넌트입니다.")]
+    [FormerlySerializedAs("pathfinder")]
+    private GoblinPathfinder2D path;
+    [SerializeField, FormerlySerializedAs("showGrid")] [Tooltip("A* 그리드 시각화를 표시할지 결정합니다.")]
+    [FormerlySerializedAs("DebugShowGrid")]
+    private bool DebugGrid = true;
+    [SerializeField, FormerlySerializedAs("showBlockedNodes")] [Tooltip("장애물 노드 시각화를 표시할지 결정합니다.")]
+    [FormerlySerializedAs("DebugShowBlockedNodes")]
+    private bool DebugBlocked = true;
+    [SerializeField] [Tooltip("그리드 선 색상입니다.")]
+    [FormerlySerializedAs("gridColor")]
+    private Color gridCol = new Color(0.08f, 0.07f, 0.05f, 0.28f);
+    [SerializeField] [Tooltip("장애물 노드 색상입니다.")]
+    [FormerlySerializedAs("blockedNodeColor")]
+    private Color blockedCol = new Color(1f, 0.12f, 0.1f, 0.52f);
+    [SerializeField, Min(0.002f)] [Tooltip("그리드 선의 두께입니다.")]
+    [FormerlySerializedAs("lineWidth")]
+    private float lineW = 0.008f;
+    [SerializeField, Min(0.01f)] [Tooltip("장애물 표시 판정에 더할 여유 거리입니다.")]
+    [FormerlySerializedAs("blockedNodeClearance")]
+    private float blockClear = 0.34f;
+    [SerializeField, Min(0.002f)] [Tooltip("장애물 노드 표시 안쪽 여백입니다.")]
+    [FormerlySerializedAs("blockedNodeInset")]
+    private float blockInset = 0.02f;
+    [SerializeField] [Tooltip("타일맵 렌더 순서에 더할 오프셋입니다.")]
+    [FormerlySerializedAs("sortingOrderOffset")]
+    private int sortOff = 1;
 
     private GameObject gridOverlayObject;
     private GameObject blockedOverlayObject;
@@ -29,15 +49,15 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
 
     private void Reset()
     {
-        ground = GetComponent<Tilemap>();
-        pathfinder = GetComponent<GoblinPathfinder2D>();
+        groundMap = GetComponent<Tilemap>();
+        path = GetComponent<GoblinPathfinder2D>();
     }
 
     private void Awake()
     {
-        if (ground == null) ground = GetComponent<Tilemap>();
-        if (pathfinder == null) pathfinder = GetComponent<GoblinPathfinder2D>();
-        if (pathfinder == null) pathfinder = FindFirstObjectByType<GoblinPathfinder2D>();
+        if (groundMap == null) groundMap = GetComponent<Tilemap>();
+        if (path == null) path = GetComponent<GoblinPathfinder2D>();
+        if (path == null) path = FindFirstObjectByType<GoblinPathfinder2D>();
         CreateOverlays();
         UpdateOverlayVisibility();
     }
@@ -55,11 +75,11 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
 
     private void CreateOverlays()
     {
-        if (ground == null || pathfinder == null || !pathfinder.EnsureGridInitialized()) return;
-        var columns = pathfinder.NodeColumns;
-        var rows = pathfinder.NodeRows;
-        var nodeSize = pathfinder.NodeSize;
-        var origin = pathfinder.GridOrigin;
+        if (groundMap == null || path == null || !path.EnsureGridInitialized()) return;
+        var columns = path.NodeColumns;
+        var rows = path.NodeRows;
+        var nodeSize = path.NodeSize;
+        var origin = path.GridOrigin;
         if (columns <= 0 || rows <= 0) return;
 
         Physics2D.SyncTransforms();
@@ -77,10 +97,10 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
 
         runtimeMaterial = new Material(shader) { name = "Goblin A* Debug Material", color = Color.white };
         if (gridMesh != null)
-            gridRenderer = CreateOverlayRenderer("Goblin Debug Node Grid", gridMesh, sortingOrderOffset, out gridOverlayObject);
+            gridRenderer = CreateOverlayRenderer("Goblin Debug Node Grid", gridMesh, sortOff, out gridOverlayObject);
         if (blockedMesh != null)
             blockedRenderer = CreateOverlayRenderer("Goblin Debug Blocked Nodes", blockedMesh,
-                sortingOrderOffset + 1, out blockedOverlayObject);
+                sortOff + 1, out blockedOverlayObject);
     }
 
     private Mesh BuildGridMesh(int columns, int rows, float nodeSize, Vector2 origin)
@@ -88,24 +108,24 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
         var vertices = new List<Vector3>((columns + rows + 2) * 4);
         var triangles = new List<int>((columns + rows + 2) * 6);
         var colors = new List<Color>((columns + rows + 2) * 4);
-        var baseZ = ground.transform.position.z - 0.025f;
+        var baseZ = groundMap.transform.position.z - 0.025f;
         var scale = Mathf.Max(0.001f,
-            Mathf.Max(Mathf.Abs(ground.transform.lossyScale.x), Mathf.Abs(ground.transform.lossyScale.y)));
-        var localLineWidth = lineWidth / scale;
+            Mathf.Max(Mathf.Abs(groundMap.transform.lossyScale.x), Mathf.Abs(groundMap.transform.lossyScale.y)));
+        var localLineWidth = lineW / scale;
 
         for (var x = 0; x <= columns; x++)
         {
             var worldX = origin.x + x * nodeSize;
             var from = WorldToLocal(new Vector3(worldX, origin.y, baseZ));
             var to = WorldToLocal(new Vector3(worldX, origin.y + rows * nodeSize, baseZ));
-            AddThickLine(vertices, triangles, colors, from, to, localLineWidth, gridColor);
+            AddThickLine(vertices, triangles, colors, from, to, localLineWidth, gridCol);
         }
         for (var y = 0; y <= rows; y++)
         {
             var worldY = origin.y + y * nodeSize;
             var from = WorldToLocal(new Vector3(origin.x, worldY, baseZ));
             var to = WorldToLocal(new Vector3(origin.x + columns * nodeSize, worldY, baseZ));
-            AddThickLine(vertices, triangles, colors, from, to, localLineWidth, gridColor);
+            AddThickLine(vertices, triangles, colors, from, to, localLineWidth, gridCol);
         }
 
         return CreateMesh("Goblin A* Debug Grid", vertices, triangles, colors);
@@ -116,19 +136,19 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
         var vertices = new List<Vector3>();
         var triangles = new List<int>();
         var colors = new List<Color>();
-        var halfSize = Mathf.Max(0.01f, nodeSize * 0.5f - blockedNodeInset);
-        var baseZ = ground.transform.position.z - 0.03f;
+        var halfSize = Mathf.Max(0.01f, nodeSize * 0.5f - blockInset);
+        var baseZ = groundMap.transform.position.z - 0.03f;
 
         for (var y = 0; y < rows; y++)
         for (var x = 0; x < columns; x++)
         {
             var center = origin + new Vector2((x + 0.5f) * nodeSize, (y + 0.5f) * nodeSize);
-            if (!ground.HasTile(ground.WorldToCell(center)) ||
-                !pathfinder.IsObstacleAt(center, blockedNodeClearance)) continue;
+            if (!groundMap.HasTile(groundMap.WorldToCell(center)) ||
+                !path.IsObstacleAt(center, blockClear)) continue;
 
             var min = WorldToLocal(new Vector3(center.x - halfSize, center.y - halfSize, baseZ));
             var max = WorldToLocal(new Vector3(center.x + halfSize, center.y + halfSize, baseZ));
-            AddQuad(vertices, triangles, colors, min, max, blockedNodeColor);
+            AddQuad(vertices, triangles, colors, min, max, blockedCol);
         }
 
         return CreateMesh("Goblin Debug Blocked Nodes", vertices, triangles, colors);
@@ -145,7 +165,7 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
 
         var renderer = overlayObject.AddComponent<MeshRenderer>();
         renderer.sharedMaterial = runtimeMaterial;
-        var groundRenderer = ground.GetComponent<TilemapRenderer>();
+        var groundRenderer = groundMap.GetComponent<TilemapRenderer>();
         if (groundRenderer != null)
         {
             renderer.sortingLayerID = groundRenderer.sortingLayerID;
@@ -158,8 +178,8 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
 
     private void UpdateOverlayVisibility()
     {
-        if (gridRenderer != null) gridRenderer.enabled = DebugShowGrid;
-        if (blockedRenderer != null) blockedRenderer.enabled = DebugShowBlockedNodes;
+        if (gridRenderer != null) gridRenderer.enabled = DebugGrid;
+        if (blockedRenderer != null) blockedRenderer.enabled = DebugBlocked;
     }
 
     private void DestroyMeshes()
@@ -182,7 +202,7 @@ public sealed class GoblinGridVisualizer : MonoBehaviour
         return mesh;
     }
 
-    private Vector3 WorldToLocal(Vector3 world) => ground.transform.InverseTransformPoint(world);
+    private Vector3 WorldToLocal(Vector3 world) => groundMap.transform.InverseTransformPoint(world);
 
     private static void AddQuad(List<Vector3> vertices, List<int> triangles, List<Color> colors,
         Vector3 min, Vector3 max, Color color)

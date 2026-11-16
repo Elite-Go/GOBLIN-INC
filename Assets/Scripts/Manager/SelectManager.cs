@@ -6,8 +6,9 @@ public class SelectManager : Singleton<SelectManager>
 {
     [SerializeField] private Camera cam;
     [SerializeField] private string selectTag;
-    [SerializeField] private List<GameObject> selectedGoblins = new();
+    [SerializeField] private List<Goblin> selectedGoblins = new();
 
+    public  List<Goblin> SelectedGoblins => selectedGoblins;
     private Vector2 _dragCurrent;
 
     private void Start()
@@ -35,17 +36,17 @@ public class SelectManager : Singleton<SelectManager>
         selectedGoblins = SelectArea(dragStart);
     }
     
-    public List<GameObject> SelectArea(Vector2 dragStart)
+    public List<Goblin> SelectArea(Vector2 dragStart)
     {
-        List<GameObject> so = new();
+        List<Goblin> so = new();
         
-        foreach (var sr in FindObjectsByType<SpriteRenderer>(FindObjectsSortMode.None))
+        foreach (var sr in FindObjectsByType<Goblin>(FindObjectsSortMode.None))
         {
             if (sr == null || !sr.enabled || !sr.gameObject.CompareTag(selectTag)) continue;
-            var screenPoint = cam.WorldToScreenPoint(sr.bounds.center);
+            var screenPoint = cam.WorldToScreenPoint(sr.Sr.bounds.center);
             var screenRect = GetScreenRect(dragStart, _dragCurrent);
             if (screenPoint.z >= 0f && screenRect.Contains(new Vector2(screenPoint.x, screenPoint.y)))
-                so.Add(sr.gameObject);
+                so.Add(sr);
         }
         
         return so;

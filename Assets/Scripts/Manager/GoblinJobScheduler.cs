@@ -8,7 +8,11 @@ public class GoblinJobScheduler : Singleton<GoblinJobScheduler>
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
+        {
             architecture = SelectManager.Instance.SelectPoint(Input.mousePosition);
+            if (architecture)
+                SelectManager.Instance.SelectedGoblins.ForEach(goblin => goblin.Agent.SetDestination(architecture.transform.position));
+        }
     }
 
 }

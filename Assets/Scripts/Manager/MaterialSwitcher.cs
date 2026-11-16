@@ -1,8 +1,7 @@
 using System;
 using UnityEngine;
 
-[Serializable]
-public class MaterialSwitcher
+public class MaterialSwitcher : Singleton<MaterialSwitcher>
 {
     [SerializeField] private Material defaultMaterial;
     [SerializeField] private Material selectedMaterial;

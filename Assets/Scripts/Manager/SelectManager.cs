@@ -6,7 +6,7 @@ public class SelectManager : Singleton<SelectManager>
 {
     [SerializeField] private Camera cam;
     [SerializeField] private string selectTag;
-    [SerializeField] private List<GameObject> selectedObjects = new();
+    [SerializeField] private List<GameObject> selectedGoblins = new();
 
     private Vector2 _dragCurrent;
 
@@ -19,10 +19,7 @@ public class SelectManager : Singleton<SelectManager>
     {
         if (Input.GetMouseButtonDown(0))
         {
-            selectedObjects.Clear();
-            var s = SelectPoint(Input.mousePosition);
-            selectedObjects.Add(s);
-            //StartCoroutine(SelectAreaAction(Input.mousePosition));
+            StartCoroutine(SelectAreaAction(Input.mousePosition));
         }
     }
 
@@ -34,8 +31,8 @@ public class SelectManager : Singleton<SelectManager>
             yield return null;
         }
         
-        selectedObjects.Clear();   
-        selectedObjects = SelectArea(dragStart);
+        selectedGoblins.Clear();   
+        selectedGoblins = SelectArea(dragStart);
     }
     
     public List<GameObject> SelectArea(Vector2 dragStart)
@@ -58,7 +55,7 @@ public class SelectManager : Singleton<SelectManager>
     {
         Vector2 worldPoint = cam.ScreenToWorldPoint(click);
 
-        var hit = Physics2D.Raycast(worldPoint, Vector2.zero);
+        var hit = Physics2D.Raycast(worldPoint, Vector2.zero);//, Mathf.Infinity, LayerMask.NameToLayer("Selectable"));
 
         return hit.collider != null ? hit.collider.gameObject : null;
     }

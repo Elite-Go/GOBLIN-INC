@@ -131,6 +131,8 @@ GameObject:
   - component: {fileID: 235777055}
   - component: {fileID: 235777058}
   - component: {fileID: 235777057}
+  - component: {fileID: 235777059}
+  - component: {fileID: 235777060}
   m_Layer: 8
   m_Name: House
   m_TagString: Untagged
@@ -276,6 +278,55 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &235777059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235777053}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 693696f8ede6b2d4a941fc9082d663e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Architecture
+  jobs: []
+--- !u!58 &235777060
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235777053}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 1.0677234}
+  m_Radius: 1.4853953
 --- !u!1 &267797911
 GameObject:
   m_ObjectHideFlags: 0
@@ -405,6 +456,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 03aa402cf86a9a94b91020bf99bb004f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Goblin
+  job:
+    duration: 0
+    resName: 
+    resAmount: 
 --- !u!195 &267797916
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -665,7 +720,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SelectManager
   cam: {fileID: 2054368921}
   selectTag: Goblin
-  selectedObjects: []
+  selectedGoblins: []
 --- !u!4 &434289751
 Transform:
   m_ObjectHideFlags: 0
@@ -678,6 +733,51 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &547327022
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 547327024}
+  - component: {fileID: 547327023}
+  m_Layer: 0
+  m_Name: GoblinJobScheduler
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &547327023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547327022}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c80ea1a4e5baa747aae6a391f7c0508, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GoblinJobScheduler
+  architecture: {fileID: 0}
+--- !u!4 &547327024
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 547327022}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.92694, y: 1.87512, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7411,7 +7511,8 @@ SceneRoots:
   - {fileID: 2054368922}
   - {fileID: 267797914}
   - {fileID: 772062261}
-  - {fileID: 434289751}
   - {fileID: 302140841}
-  - {fileID: 423719422}
   - {fileID: 235777056}
+  - {fileID: 434289751}
+  - {fileID: 547327024}
+  - {fileID: 423719422}

@@ -3,6 +3,8 @@ using UnityEngine.AI;
 
 public class Goblin : MonoBehaviour
 {
+    [SerializeField] private Job job;
+    
     private SpriteRenderer _sr;
     private NavMeshAgent _agent;
     

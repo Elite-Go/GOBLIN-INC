@@ -3,16 +3,22 @@ using UnityEngine;
 
 public class GoblinJobScheduler : Singleton<GoblinJobScheduler>
 {
-    [SerializeField] private GameObject architecture;
+    [SerializeField] private Architecture architecture;
     
     private void Update()
     {
         if (Input.GetMouseButtonDown(1))
         {
-            architecture = SelectManager.Instance.SelectPoint(Input.mousePosition);
-            if (architecture)
-                SelectManager.Instance.SelectedGoblins.ForEach(goblin => goblin.Agent.SetDestination(architecture.transform.position));
+            architecture = SelectManager.Instance.SelectPoint(Input.mousePosition).GetComponent<Architecture>();
+            if (!architecture) return;
+            
+            SelectManager.Instance.ControlGoblins(MoveToArch);
         }
+    }
+
+    private void MoveToArch(Goblin g)
+    {
+        g.Agent.SetDestination(architecture.GetArrivalPosition());
     }
 
 }

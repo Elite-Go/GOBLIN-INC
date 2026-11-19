@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class GoblinJobScheduler : Singleton<GoblinJobScheduler>
 {
@@ -43,10 +45,28 @@ public class GoblinJobScheduler : Singleton<GoblinJobScheduler>
 [Serializable]
 public class Job
 {
-    [Header("Job Info")]
+    public Vector2 arrivalPosition;
+    public Action jobAction;
     public float duration;
+    
+    private NavMeshAgent _agent;
 
-    [Header("Comp Info")] 
-    public string resName;
-    public string resAmount;
+    public Job(NavMeshAgent agent)
+    {
+        _agent = agent;
+    }
+    
+    public void Start()
+    {
+        _agent.SetDestination(arrivalPosition);
+
+        CoroutineRunner.StartRoutine(JobRoutine());
+    }
+
+    private IEnumerator JobRoutine()
+    {
+        yield return new WaitWhile(() => _agent.isStopped);
+        yield return new WaitForSeconds(duration);
+        jobAction.Invoke();
+    }
 }

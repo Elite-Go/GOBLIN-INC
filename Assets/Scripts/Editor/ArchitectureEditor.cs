@@ -15,9 +15,8 @@ public class ArchitectureEditor : Editor
 
         // 씬 뷰에 드래그 가능한 '점(Sphere)' 형태의 핸들 생성
         // 마우스로 이 점을 잡고 움직여서 arrivalPos를 조작할 수 있습니다.
-        Vector3 newWorldPos = Handles.FreeMoveHandle(
+        var fmh_20_13_639307207555711775 = Quaternion.identity; Vector3 newWorldPos = Handles.FreeMoveHandle(
             currentWorldPos, 
-            Quaternion.identity, 
             0.3f, // 핸들 크기
             Vector3.one * 0.1f, 
             Handles.SphereHandleCap // 구체 형태의 점 핸들

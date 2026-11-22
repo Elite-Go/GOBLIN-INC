@@ -1,18 +1,23 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 
-public class CameraManager : MonoBehaviour
+public class CameraManager : Singleton<CameraManager>
 {
-    private Camera _camera;
-    private PixelPerfectCamera _pixelPerfectCamera;
+    private Camera _cam;
 
     private void Awake()
     {
-        _camera = GetComponent<Camera>();
-        _pixelPerfectCamera = GetComponent<PixelPerfectCamera>();
+        _cam = GetComponent<Camera>();
     }
 
     private void Update()
     {
+        
+    }
+
+    public static void ZoomIn(Transform target)
+    {
+        var origin= target.position;
+        origin.z = Instance._cam.transform.position.z;
+        Instance._cam.transform.position = origin;
     }
 }

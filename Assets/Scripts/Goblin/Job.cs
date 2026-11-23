@@ -5,9 +5,12 @@ using UnityEngine;
 public class Job
 {
     public Vector2 destination;
+    public Resource resource;
 
-    public Job(Vector2 dest)
+    public Job(Vector2 dest, Resource res)
     {
-        destination = dest;        
+        destination = dest;
+        resource = res;
     }
+
 }

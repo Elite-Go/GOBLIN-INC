@@ -11887,8 +11887,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Structure
   goblins:
     prefab: {fileID: 7996377661974950541, guid: fdeb3e4e72a7736428e11fd2ffadc545, type: 3}
-    initialSize: 10
-  spawnPoint: {x: 0, y: -1}
+    initialSize: 1
 --- !u!70 &172662386
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -12114,6 +12113,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28a2c36776c5504ca3a6b20aa3892b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Resource
+  amount: 1
+  duration: 3
 --- !u!61 &295143386
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -12957,6 +12958,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f28a2c36776c5504ca3a6b20aa3892b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Resource
+  amount: 3
+  duration: 6
 --- !u!61 &1232863021
 BoxCollider2D:
   m_ObjectHideFlags: 0

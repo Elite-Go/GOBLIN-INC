@@ -34,7 +34,7 @@ public class SelectManager : MonoBehaviour
             {
                 resource = res;
                 CameraManager.ZoomIn(res.transform);
-                var job = new Job(res.transform.position, res);
+                var job = new Job(res.transform.position, structure, res);
                 StartCoroutine(structure?.ControlAllGoblins(g => g.GiveJob(job)));
             }
         }

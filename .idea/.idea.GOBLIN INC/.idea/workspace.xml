@@ -6,34 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="6d22a44a-4a31-40ec-b429-d5882ff157f6" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Goblin_Head.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Goblin_Head.png.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Main.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Main.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Main/NavMesh-GoblinNavMesh2D.asset" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Main/NavMesh-GoblinNavMesh2D.asset.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Editor.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Editor/ArchitectureEditor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Editor/ArchitectureEditor.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Architecture.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Architecture.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Test.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Test.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Resource.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Resource.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/CoroutineRunner.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/CoroutineRunner.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinController.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinController.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinJobScheduler.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinJobScheduler.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinPoolManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/GoblinPoolManager.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/HoverManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/HoverManager.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/MaterialSwitcher.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/MaterialSwitcher.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/PlayerResourceManager.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/PlayerResourceManager.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Job.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Job.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -134,6 +109,7 @@
       <workItem from="1795273842425" duration="905000" />
       <workItem from="1795325079779" duration="3570000" />
       <workItem from="1795348438126" duration="6175000" />
+      <workItem from="1795419667126" duration="3269000" />
     </task>
     <servers />
   </component>

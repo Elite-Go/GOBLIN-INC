@@ -60,15 +60,28 @@ public class Goblin : MonoBehaviour
         
         _agent.isStopped = true;
         _agent.velocity = Vector2.zero;
-        _agent.enabled = false;
         
         _animator.SetBool("IsMove", false);
 
-        OnArrival();
+        StartCoroutine(OnArrival());
     }
 
-    private void OnArrival()
+    private IEnumerator OnArrival()
     {
-        job.resource.StartCoroutine(job.resource.DoCollect(r => Debug.Log($"Get Wood : {r.amount}")));
+        yield return job.resource.DoCollect(r => Debug.Log($"Get Wood : {r.amount}"));
+
+        _animator.SetBool("IsMove", true);
+        _agent.isStopped = false;
+        _agent.SetDestination(job.structure.transform.position);
+        
+        while (!_agent.isStopped)
+        {
+            if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
+                break;
+            _sr.flipX = _agent.velocity.x > 0f;
+            yield return null;
+        }
+        
+        job.structure.goblins.Release(this);
     }
 }

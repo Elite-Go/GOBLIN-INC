@@ -8,6 +8,7 @@ public class Goblin : MonoBehaviour
     private SpriteRenderer _sr;
     private Animator _animator;
     [SerializeField] private Job job;
+    [SerializeField] private Transform hand;
 
     private void Awake()
     {
@@ -55,6 +56,7 @@ public class Goblin : MonoBehaviour
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
                 break;
             _sr.flipX = _agent.velocity.x > 0f;
+            hand.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
             yield return null;
         }
         
@@ -68,8 +70,11 @@ public class Goblin : MonoBehaviour
 
     private IEnumerator OnArrival()
     {
+        _animator.SetBool("IsAttack2", true);
+
         yield return job.resource.DoCollect(r => Debug.Log($"Get Wood : {r.amount}"));
 
+        _animator.SetBool("IsAttack2", false);
         _animator.SetBool("IsMove", true);
         _agent.isStopped = false;
         _agent.SetDestination(job.structure.transform.position);
@@ -79,6 +84,7 @@ public class Goblin : MonoBehaviour
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
                 break;
             _sr.flipX = _agent.velocity.x > 0f;
+            hand.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
             yield return null;
         }
         

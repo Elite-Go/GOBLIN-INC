@@ -17,13 +17,13 @@ public class Pool<T> where T : Component
 
     public void Initialize(Transform parentTransform = null)
     {
-        if (_root != null) return;
+        if (_root) return;
         
         _root = parentTransform;
 
         for (int i = 0; i < initialSize; i++)
         {
-            T obj = CreateNewInstance();
+            var obj = CreateNewInstance();
             obj.gameObject.SetActive(false);
             _inactiveQueue.Enqueue(obj);
         }
@@ -31,7 +31,7 @@ public class Pool<T> where T : Component
 
     private T CreateNewInstance()
     {
-        T obj = Object.Instantiate(prefab, _root);
+        var obj = Object.Instantiate(prefab, _root);
         return obj;
     }
 

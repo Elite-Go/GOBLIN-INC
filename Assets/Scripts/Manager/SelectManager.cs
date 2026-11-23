@@ -5,7 +5,6 @@ public class SelectManager : MonoBehaviour
 {
     [SerializeField] private Structure structure;
     [SerializeField] private Resource resource;
-    [SerializeField] private List<Goblin> goblins;
     
     [SerializeField] private Camera cam;
     
@@ -19,17 +18,23 @@ public class SelectManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             var obj = SelectObject();
-            if (!obj) return;
+            if (!obj)
+            {
+                structure = null;
+                resource = null;
+                return;
+            }
              
             if (obj.TryGetComponent(out Structure str))
             {
                 structure = str;
                 CameraManager.ZoomIn(str.transform);
             }
-            if (obj.TryGetComponent(out Resource res))
+            else if (obj.TryGetComponent(out Resource res))
             {
                 resource = res;
                 CameraManager.ZoomIn(res.transform);
+                StartCoroutine(structure?.ControlAllGoblins(g => g.GiveJob(new Job(resource.transform.position))));
             }
         }
     }
@@ -40,6 +45,6 @@ public class SelectManager : MonoBehaviour
 
         var hit = Physics2D.Raycast(worldPoint, Vector2.zero);
 
-        return hit.collider != null ? hit.collider.gameObject : null;
+        return hit.collider ? hit.collider.gameObject : null;
     }
 }

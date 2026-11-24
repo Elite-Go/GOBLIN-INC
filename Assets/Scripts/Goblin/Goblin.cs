@@ -94,7 +94,8 @@ public class Goblin : MonoBehaviour
             hand.transform.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
             yield return null;
         }
-        
+
+        PlayerResource.Instance.wood.Get(job.resource.amount);
         job.structure.goblins.Release(this);
         
         PathVisualizer.Instance.Clear();

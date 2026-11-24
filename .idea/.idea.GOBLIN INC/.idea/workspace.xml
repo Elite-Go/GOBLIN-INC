@@ -6,15 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="6d22a44a-4a31-40ec-b429-d5882ff157f6" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Animation/Attack_1.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Animation/Attack_1.anim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Animation/Attack_2.anim" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Animation/Attack_2.anim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Animation/Goblin.controller" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Animation/Goblin.controller" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.aseprite" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.aseprite" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.aseprite.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.aseprite.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.png" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.png.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Tools.png.meta" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Test.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Test.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/Test/NavMesh-GoblinNavMesh2D.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Test/NavMesh-GoblinNavMesh2D.asset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -115,6 +111,7 @@
       <workItem from="1795325079779" duration="3570000" />
       <workItem from="1795348438126" duration="6175000" />
       <workItem from="1795419667126" duration="5310000" />
+      <workItem from="1795529743863" duration="1005000" />
     </task>
     <servers />
   </component>

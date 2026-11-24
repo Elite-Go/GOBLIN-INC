@@ -4,7 +4,7 @@ public class CameraManager : Singleton<CameraManager>
 {
     private Camera _cam;
 
-    private void Awake()
+    protected override void Awake()
     {
         _cam = GetComponent<Camera>();
     }

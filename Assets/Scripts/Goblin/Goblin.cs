@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using System.IO;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +10,7 @@ public class Goblin : MonoBehaviour
     private SpriteRenderer _sr;
     private Animator _animator;
     [SerializeField] private Job job;
-    [SerializeField] private Transform hand;
+    [SerializeField] private GameObject hand;
 
     private void Awake()
     {
@@ -27,6 +29,8 @@ public class Goblin : MonoBehaviour
 
     public void GiveJob(Job j)
     {
+        hand.SetActive(false);
+        
         job = j;
         _agent.enabled = true;
         MoveTo(job.destination);
@@ -38,8 +42,8 @@ public class Goblin : MonoBehaviour
     {
         if (NavMesh.SamplePosition(destination, out var hit, 2f, NavMesh.AllAreas))
         {
-            Debug.Log("Locate Position : " + hit.position);
             _agent.SetDestination(hit.position);
+            PathVisualizer.Instance.ShowPath(_agent);
         }
         else
         {
@@ -56,7 +60,7 @@ public class Goblin : MonoBehaviour
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
                 break;
             _sr.flipX = _agent.velocity.x > 0f;
-            hand.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
+            hand.transform.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
             yield return null;
         }
         
@@ -70,12 +74,15 @@ public class Goblin : MonoBehaviour
 
     private IEnumerator OnArrival()
     {
-        _animator.SetBool("IsAttack2", true);
-
+        _animator.SetBool("IsAttack1", true);
+        hand.SetActive(true);
+        
         yield return job.resource.DoCollect(r => Debug.Log($"Get Wood : {r.amount}"));
-
-        _animator.SetBool("IsAttack2", false);
+        
+        _animator.SetBool("IsAttack1", false);
         _animator.SetBool("IsMove", true);
+        _animator.SetBool("HasResource", true);
+        
         _agent.isStopped = false;
         _agent.SetDestination(job.structure.transform.position);
         
@@ -84,10 +91,12 @@ public class Goblin : MonoBehaviour
             if (!_agent.pathPending && _agent.remainingDistance <= _agent.stoppingDistance)
                 break;
             _sr.flipX = _agent.velocity.x > 0f;
-            hand.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
+            hand.transform.localScale = new Vector3(_sr.flipX ? -1f : 1f, 1f, 1f);
             yield return null;
         }
         
         job.structure.goblins.Release(this);
+        
+        PathVisualizer.Instance.Clear();
     }
 }

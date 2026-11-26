@@ -95,7 +95,7 @@ public class Goblin : MonoBehaviour
             yield return null;
         }
 
-        PlayerResource.Instance.wood.Get(job.resource.amount);
+        PlayerResource.Instance.GetResource(job.resource);
         job.structure.goblins.Release(this);
         
         PathVisualizer.Instance.Clear();

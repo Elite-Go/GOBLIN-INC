@@ -2,8 +2,15 @@ using System;
 using System.Collections;
 using UnityEngine;
 
+public enum ResourceType
+{
+    Wood,
+    Stone
+}
+
 public class Resource : MonoBehaviour
 {
+    public ResourceType type;
     public int amount;
     
     public float duration;

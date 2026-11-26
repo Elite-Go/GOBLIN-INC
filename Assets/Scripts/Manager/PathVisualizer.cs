@@ -14,7 +14,7 @@ public class PathVisualizer : Singleton<PathVisualizer>
 
     protected override void Awake()
     {
-        base.Awake();
+        //base.Awake();
         if (line != null)
         {
             line.useWorldSpace = true;

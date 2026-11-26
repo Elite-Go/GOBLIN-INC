@@ -6,11 +6,16 @@
   <component name="ChangeListManager">
     <list default="true" id="6d22a44a-4a31-40ec-b429-d5882ff157f6" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GOBLIN INC/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Goblin.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Assets/Sprites/Structures.aseprite.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Assets/Sprites/Structures.aseprite.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Resource/Tree_1.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Resource/Tree_1.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefabs/Resource/Tree_2.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefabs/Resource/Tree_2.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Test.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Test.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Test/NavMesh-GoblinNavMesh2D.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Test/NavMesh-GoblinNavMesh2D.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Resource.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Resource.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Goblin/Structure.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Goblin/Structure.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Manager/SelectManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Shaders/PixelOutliner.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Shaders/PixelOutliner.mat" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,7 +28,8 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Goblin/Goblin.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/Scripts/Manager/CameraManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Manager/Singleton.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Manager/OutlineSwitcher.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/Scripts/Manager/SpriteBoingPlayer.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
@@ -112,6 +118,7 @@
       <workItem from="1795348438126" duration="6175000" />
       <workItem from="1795419667126" duration="5310000" />
       <workItem from="1795529743863" duration="1005000" />
+      <workItem from="1795687844984" duration="6181000" />
     </task>
     <servers />
   </component>

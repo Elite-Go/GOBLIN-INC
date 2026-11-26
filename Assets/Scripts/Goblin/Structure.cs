@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Structure : MonoBehaviour
 {
+    private SpriteRenderer _renderer;
     public Pool<Goblin> goblins;
+    
+    public SpriteRenderer sr => _renderer;
 
     private void Awake()
     {

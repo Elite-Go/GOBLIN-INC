@@ -25,17 +25,23 @@ public class SelectManager : MonoBehaviour
                 return;
             }
              
+            CameraManager.MoveTo(obj.transform);
             if (obj.TryGetComponent(out Structure str))
             {
                 structure = str;
-                CameraManager.ZoomIn(str.transform);
+                OutlineSwitcher.Instance.SetOutline(str.sr, true);
+                SpriteBoingPlayer.PlayOnce(structure.transform);
             }
             else if (obj.TryGetComponent(out Resource res))
             {
                 resource = res;
-                CameraManager.ZoomIn(res.transform);
+                if (!structure) return;
+                
                 var job = new Job(res.transform.position, structure, res);
-                StartCoroutine(structure?.ControlAllGoblins(g => g.GiveJob(job)));
+                OutlineSwitcher.Instance.SetOutline(res.sr, true);
+                SpriteBoingPlayer.PlayOnce(resource.transform);
+                
+                StartCoroutine(structure.ControlAllGoblins(g => g.GiveJob(job)));
             }
         }
     }

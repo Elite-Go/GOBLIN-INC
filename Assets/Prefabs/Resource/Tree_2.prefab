@@ -109,7 +109,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Resource
   type: 0
   amount: 3
-  duration: 6
+  duration: 4
 --- !u!58 &2626740515371403985
 CircleCollider2D:
   m_ObjectHideFlags: 0

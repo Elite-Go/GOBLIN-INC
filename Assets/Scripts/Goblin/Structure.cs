@@ -12,6 +12,7 @@ public class Structure : MonoBehaviour
     private void Awake()
     {
         goblins.Initialize(transform);
+        _renderer = GetComponent<SpriteRenderer>();
     }
     
     public IEnumerator ControlAllGoblins(Action<Goblin> action)

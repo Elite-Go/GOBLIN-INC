@@ -10,6 +10,7 @@ public class Pool<T> where T : Component
     private Queue<T> _inactiveQueue = new Queue<T>();
     private HashSet<T> _activeSet = new HashSet<T>();
     private Transform _root;
+    private bool _initialized;
 
     public Transform Root => _root;
     public int ActiveCount => _activeSet.Count;
@@ -17,9 +18,10 @@ public class Pool<T> where T : Component
 
     public void Initialize(Transform parentTransform = null)
     {
-        if (_root) return;
+        if (_initialized) return;
         
         _root = parentTransform;
+        _initialized = true;
 
         for (int i = 0; i < initialSize; i++)
         {
@@ -37,7 +39,7 @@ public class Pool<T> where T : Component
 
     public T Get()
     {
-        if (_root == null)
+        if (!_initialized)
         {
             Initialize();
         }
@@ -69,12 +71,7 @@ public class Pool<T> where T : Component
 
     public void Release(T obj)
     {
-        if (obj == null) return;
-
-        if (_activeSet.Contains(obj))
-        {
-            _activeSet.Remove(obj);
-        }
+        if (obj == null || !_activeSet.Remove(obj)) return;
 
         obj.gameObject.SetActive(false);
         obj.transform.SetParent(_root);
@@ -94,10 +91,6 @@ public class Pool<T> where T : Component
 
         _activeSet.Clear();
         _inactiveQueue.Clear();
-
-        if (_root != null)
-        {
-            Object.Destroy(_root.gameObject);
-        }
+        _initialized = false;
     }
 }

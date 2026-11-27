@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -17,6 +18,8 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
         public Tween scaleTween;
         public Tween colorTween;
         public bool initialized;
+        public long lastDisplayedValue;
+        public bool hasDisplayedValue;
     }
 
     [Header("점프 연출")]
@@ -66,7 +69,7 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
         if ((long)System.Math.Round(state.currentValue) == newValue && prevTarget == newValue)
         {
             state.currentValue = newValue;
-            targetText.text = newValue.ToString(numberFormat);
+            SetDisplayedValue(targetText, state, newValue);
             return;
         }
 
@@ -80,7 +83,7 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
                     long shown = System.Math.Abs(state.targetValue - v) < 0.5
                         ? state.targetValue
                         : (long)System.Math.Round(v);
-                    targetText.text = shown.ToString(numberFormat);
+                    SetDisplayedValue(targetText, state, shown);
                 }
             },
             (double)newValue,
@@ -93,7 +96,7 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
             state.currentValue = state.targetValue;
             if (targetText != null)
             {
-                targetText.text = state.targetValue.ToString(numberFormat);
+                SetDisplayedValue(targetText, state, state.targetValue);
             }
         });
 
@@ -174,7 +177,8 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
         rect.anchoredPosition = new Vector2(state.baseAnchoredPos.x, state.baseAnchoredPos.y);
         rect.localScale = state.baseScale;
         targetText.color = state.baseColor;
-        targetText.text = value.ToString(numberFormat);
+        state.hasDisplayedValue = false;
+        SetDisplayedValue(targetText, state, value);
     }
 
     private TargetState GetOrCreateState(TMP_Text targetText, RectTransform rect)
@@ -208,17 +212,26 @@ public class ResourceJumpEffect : Singleton<ResourceJumpEffect>
     {
         if (string.IsNullOrEmpty(raw)) return 0;
 
-        string cleaned = "";
+        var cleaned = new StringBuilder(raw.Length);
         for (int i = 0; i < raw.Length; i++)
         {
             char c = raw[i];
             if (char.IsDigit(c) || (c == '-' && cleaned.Length == 0))
             {
-                cleaned += c;
+                cleaned.Append(c);
             }
         }
 
-        return long.TryParse(cleaned, out long val) ? val : 0;
+        return long.TryParse(cleaned.ToString(), out long val) ? val : 0;
+    }
+
+    private void SetDisplayedValue(TMP_Text targetText, TargetState state, long value)
+    {
+        if (state.hasDisplayedValue && state.lastDisplayedValue == value) return;
+
+        state.lastDisplayedValue = value;
+        state.hasDisplayedValue = true;
+        targetText.text = value.ToString(numberFormat);
     }
 
     private static void KillTween(Tween tween)

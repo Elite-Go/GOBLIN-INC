@@ -11,13 +11,18 @@ public enum ResourceType
 public class Resource : MonoBehaviour
 {
     private SpriteRenderer _renderer;
-    
+
+    public Sprite resourceSprite;
     public ResourceType type;
     public int amount;
     
     public float duration;
     public SpriteRenderer sr => _renderer;
 
+    private void Awake()
+    {
+        _renderer = GetComponent<SpriteRenderer>();
+    }
     
     public IEnumerator DoCollect(Action<Resource> endAct)
     {
@@ -29,6 +34,6 @@ public class Resource : MonoBehaviour
             yield return null;
         }
 
-        endAct(this);
+        endAct?.Invoke(this);
     }
 }
